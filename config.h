@@ -27,8 +27,8 @@ static const Rule rules[] = {
 	 *	WM_NAME(STRING) = title
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor */
-	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
-	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
+	{ "i am just here so the code will compile. please kill me.",     NULL,       NULL,       0,            1,           -1 },
+	//{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
 };
 
 /* layout(s) */
@@ -60,9 +60,10 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 static const char *termcmd[]  = { "alacritty", NULL };
 
-static const char *upvol[]   = { "amixer", "set", "Master", "3%+",     NULL };
-static const char *downvol[] = { "amixer", "set", "Master", "3%-",     NULL };
-static const char *mutevol[] = { "amixer", "set", "Master", "toggle", NULL };
+static const char *upvol[]   = { "dwm_vol", "-cmd", "up", "-m", dmenumon, "-fn", dmenufont, "-b", col_gray1, "-sb", col_cyan, NULL };
+static const char *downvol[] = { "dwm_vol", "-cmd", "down", "-m", dmenumon, "-fn", dmenufont, "-b", col_gray1, "-sb", col_cyan, NULL };
+static const char *mutevol[] = { "dwm_vol", "-cmd", "toggle", "-m", dmenumon, "-fn", dmenufont, "-b", col_gray1, "-sb", col_cyan, NULL };
+static const char *interactive[] = { "dwm_vol", "-i", "-m", dmenumon, "-fn", dmenufont, "-b", col_gray1, "-sb", col_cyan,  NULL };
 
 
 static Key keys[] = {
@@ -71,10 +72,11 @@ static Key keys[] = {
         // volume keys
 	{ 0,                            0x1008ff11,     spawn,          {.v = downvol } },
 	{ 0,                            0x1008ff13,     spawn,          {.v = upvol   } },
-	{ 0,                            0x1008ff12,     spawn,          {.v = mutevol } },
+    { 0,                            0x1008ff12,     spawn,          {.v = mutevol } },
+    { MODKEY,                       XK_s,                    spawn,          {.v = interactive } },
 
         //predefined
-	{ MODKEY,                       XK_space,      spawn,          {.v = dmenucmd } },
+	{ MODKEY,                       XK_space,  spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
