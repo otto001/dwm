@@ -2049,7 +2049,7 @@ updatemotifhints(Client *c)
 			else
 				c->bw = c->oldbw = 0;
 
-			resize(c, c->x, c->y, width - (2*c->bw), height - (2*c->bw), 0);
+			resize(c, c->x+1, c->y-1, width - (2*c->bw), height - (2*c->bw), 0);
 		}
 		XFree(p);
 	}
