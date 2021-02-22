@@ -67,6 +67,10 @@ static const char *mutevol[] = { "dwm_vol", "-cmd", "toggle", "-m", dmenumon, "-
 static const char *interactive[] = { "dwm_vol", "-i", "-m", dmenumon, "-fn", dmenufont, "-b", col_gray1, "-sb", col_cyan,  NULL };
 
 static const char *dpowercmd[] = { "dpower", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+static const char *dblue[] = { "dblue", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+
+static const char *slock[] = { "slock", NULL };
+
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
@@ -83,8 +87,10 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 
     { MODKEY|ShiftMask,             XK_p,      spawn,     {.v = dpowercmd} },
+    { MODKEY,                       XK_b,      spawn,     {.v = dblue} },
+    { MODKEY|ShiftMask,             XK_l,      spawn,     {.v = slock} },
 
-    { MODKEY,                       XK_b,      togglebar,      {0} },
+    //{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
 	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
