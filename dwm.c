@@ -41,6 +41,7 @@
 #include <X11/extensions/Xinerama.h>
 #endif /* XINERAMA */
 #include <X11/Xft/Xft.h>
+#include <time.h>
 
 #include "drw.h"
 #include "util.h"
@@ -245,6 +246,9 @@ static int xerrordummy(Display *dpy, XErrorEvent *ee);
 static int xerrorstart(Display *dpy, XErrorEvent *ee);
 static void zoom(const Arg *arg);
 
+
+static void logtofile(const char* str);
+
 /* variables */
 static const char autostartblocksh[] = "autostart_blocking.sh";
 static const char autostartsh[] = "autostart.sh";
@@ -290,6 +294,18 @@ static Window root, wmcheckwin;
 struct NumTags { char limitexceeded[LENGTH(tags) > 31 ? -1 : 1]; };
 
 /* function implementations */
+
+void logtofile(const char* str) {
+    FILE* file = fopen("/var/log/dwm.logtofile", "a");
+    char buf[16];
+    time_t t = time(NULL);
+    struct tm* ltime = localtime(&t);
+    buf[strftime(buf, sizeof(buf), "%H:%M:%S", ltime)] = '\0';
+    fprintf(file,"[%s] %s\n", buf, str);
+    fclose(file);
+}
+
+
 void
 applyrules(Client *c)
 {
