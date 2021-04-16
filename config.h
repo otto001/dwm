@@ -61,13 +61,15 @@ static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont,
 static const char *dmenucmdsudo[] = { "dmenu_run_sudo", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, "-F", "-i", NULL };
 static const char *termcmd[]  = { "alacritty", NULL };
 
-static const char *upvol[]   = { "dwm_vol", "-cmd", "up", "-m", dmenumon, "-fn", dmenufont, "-b", col_gray1, "-sb", col_cyan, NULL };
-static const char *downvol[] = { "dwm_vol", "-cmd", "down", "-m", dmenumon, "-fn", dmenufont, "-b", col_gray1, "-sb", col_cyan, NULL };
-static const char *mutevol[] = { "dwm_vol", "-cmd", "toggle", "-m", dmenumon, "-fn", dmenufont, "-b", col_gray1, "-sb", col_cyan, NULL };
-static const char *interactive[] = { "dwm_vol", "-i", "-m", dmenumon, "-fn", dmenufont, "-b", col_gray1, "-sb", col_cyan,  NULL };
+static const char *upvol[]   = { "dvol", "-cmd", "up", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-sb", col_cyan, NULL };
+static const char *downvol[] = { "dvol", "-cmd", "down", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-sb", col_cyan, NULL };
+static const char *mutevol[] = { "dvol", "-cmd", "toggle", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-sb", col_cyan, NULL };
+static const char *interactive[] = { "dvol", "-i", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-sb", col_cyan,  NULL };
 
 static const char *dpowercmd[] = { "dpower", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 static const char *dblue[] = { "dblue", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+
+static const char *scrot[] = { "scrot", "~/Pictures/'%F_%H-%M-%S.png'", "-s", NULL };
 
 static const char *slock[] = { "slock", NULL };
 
@@ -79,7 +81,7 @@ static Key keys[] = {
 	{ 0,                            0x1008ff11,     spawn,          {.v = downvol } },
 	{ 0,                            0x1008ff13,     spawn,          {.v = upvol   } },
     { 0,                            0x1008ff12,     spawn,          {.v = mutevol } },
-    { MODKEY,                       XK_s,                    spawn,          {.v = interactive } },
+    { MODKEY,                       XK_a,           spawn,          {.v = interactive } },
 
         //predefined
     { MODKEY,                       XK_space,  spawn,          {.v = dmenucmd } },
@@ -89,6 +91,8 @@ static Key keys[] = {
     { MODKEY|ShiftMask,             XK_p,      spawn,     {.v = dpowercmd} },
     { MODKEY,                       XK_b,      spawn,     {.v = dblue} },
     { MODKEY|ShiftMask,             XK_l,      spawn,     {.v = slock} },
+
+    { MODKEY|ShiftMask,             XK_s,      spawn,     {.v = scrot} },
 
     //{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
@@ -120,7 +124,7 @@ static Key keys[] = {
 	TAGKEYS(                        XK_7,                      6)
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
-	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
+	{ MODKEY|ShiftMask|ControlMask, XK_q,      quit,           {0} },
 };
 
 /* button definitions */
