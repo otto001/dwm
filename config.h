@@ -47,10 +47,10 @@ static const Layout layouts[] = {
 /* key definitions */
 #define MODKEY Mod4Mask
 #define TAGKEYS(KEY,TAG) \
-	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
-	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
-	{ MODKEY|ShiftMask,             KEY,      tag,            {.ui = 1 << TAG} }, \
-	{ MODKEY|ControlMask|ShiftMask, KEY,      toggletag,      {.ui = 1 << TAG} },
+	{ KeyPress,    MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
+	{ KeyPress,    MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
+	{ KeyPress,    MODKEY|ShiftMask,             KEY,      tag,            {.ui = 1 << TAG} }, \
+	{ KeyPress,    MODKEY|ControlMask|ShiftMask, KEY,      toggletag,      {.ui = 1 << TAG} },
 
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
@@ -61,13 +61,15 @@ static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont,
 static const char *dmenucmdsudo[] = { "dmenu_run_sudo", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, "-F", "-i", NULL };
 static const char *termcmd[]  = { "alacritty", NULL };
 
-static const char *upvol[]   = { "dwm_vol", "-cmd", "up", "-m", dmenumon, "-fn", dmenufont, "-b", col_gray1, "-sb", col_cyan, NULL };
-static const char *downvol[] = { "dwm_vol", "-cmd", "down", "-m", dmenumon, "-fn", dmenufont, "-b", col_gray1, "-sb", col_cyan, NULL };
-static const char *mutevol[] = { "dwm_vol", "-cmd", "toggle", "-m", dmenumon, "-fn", dmenufont, "-b", col_gray1, "-sb", col_cyan, NULL };
-static const char *interactive[] = { "dwm_vol", "-i", "-m", dmenumon, "-fn", dmenufont, "-b", col_gray1, "-sb", col_cyan,  NULL };
+static const char *upvol[]   = { "dvol", "-cmd", "up", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-sb", col_cyan, NULL };
+static const char *downvol[] = { "dvol", "-cmd", "down", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-sb", col_cyan, NULL };
+static const char *mutevol[] = { "dvol", "-cmd", "toggle", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-sb", col_cyan, NULL };
+static const char *interactive[] = { "dvol", "-i", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-sb", col_cyan,  NULL };
 
 static const char *dpowercmd[] = { "dpower", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 static const char *dblue[] = { "dblue", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+
+static const char *scrot[] = { "scrot", "Pictures/%F_%H-%M-%S.png", "-s", NULL };
 
 static const char *slock[] = { "slock", NULL };
 
@@ -76,41 +78,43 @@ static Key keys[] = {
 	/* modifier                     key        function        argument */
 
         // volume keys
-	{ 0,                            0x1008ff11,     spawn,          {.v = downvol } },
-	{ 0,                            0x1008ff13,     spawn,          {.v = upvol   } },
-    { 0,                            0x1008ff12,     spawn,          {.v = mutevol } },
-    { MODKEY,                       XK_s,                    spawn,          {.v = interactive } },
+	{ KeyPress,    0,                            0x1008ff11,     spawn,          {.v = downvol } },
+	{ KeyPress,    0,                            0x1008ff13,     spawn,          {.v = upvol   } },
+    { KeyPress,    0,                            0x1008ff12,     spawn,          {.v = mutevol } },
+    { KeyPress,    MODKEY,                       XK_a,           spawn,          {.v = interactive } },
 
         //predefined
-    { MODKEY,                       XK_space,  spawn,          {.v = dmenucmd } },
-    { MODKEY|ShiftMask,             XK_space,  spawn,          {.v = dmenucmdsudo } },
-	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
+    { KeyPress,    MODKEY,                       XK_space,  spawn,          {.v = dmenucmd } },
+    { KeyPress,    MODKEY|ShiftMask,             XK_space,  spawn,          {.v = dmenucmdsudo } },
+	{ KeyPress,    MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 
-    { MODKEY|ShiftMask,             XK_p,      spawn,     {.v = dpowercmd} },
-    { MODKEY,                       XK_b,      spawn,     {.v = dblue} },
-    { MODKEY|ShiftMask,             XK_l,      spawn,     {.v = slock} },
+    { KeyPress,    MODKEY|ShiftMask,             XK_p,      spawn,     {.v = dpowercmd} },
+    { KeyPress,    MODKEY,                       XK_b,      spawn,     {.v = dblue} },
+    { KeyPress,    MODKEY|ShiftMask,             XK_l,      spawn,     {.v = slock} },
 
-    //{ MODKEY,                       XK_b,      togglebar,      {0} },
-	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
-	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
-	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
-	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
-	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
-	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
-	{ MODKEY,                       XK_Return, zoom,           {0} },
-	{ MODKEY,                       XK_Tab,    view,           {0} },
-	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
-	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
-	//{ MODKEY,                       XK_space,  setlayout,      {0} },
-	//{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
-	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
-	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
-	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
-	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
+    { KeyRelease,  MODKEY|ShiftMask,             XK_s,      spawn,     {.v = scrot} },
+
+    //{ KeyPress,    MODKEY,                       XK_b,      togglebar,      {0} },
+	{ KeyPress,    MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
+	{ KeyPress,    MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
+	{ KeyPress,    MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
+	{ KeyPress,    MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
+	{ KeyPress,    MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
+	{ KeyPress,    MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
+	{ KeyPress,    MODKEY,                       XK_Return, zoom,           {0} },
+	{ KeyPress,    MODKEY,                       XK_Tab,    view,           {0} },
+	{ KeyPress,    MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
+	{ KeyPress,    MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
+	{ KeyPress,    MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
+	{ KeyPress,    MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
+	//{ KeyPress,    MODKEY,                       XK_space,  setlayout,      {0} },
+	//{ KeyPress,    MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
+	{ KeyPress,    MODKEY,                       XK_0,      view,           {.ui = ~0 } },
+	{ KeyPress,    MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
+	{ KeyPress,    MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
+	{ KeyPress,    MODKEY,                       XK_period, focusmon,       {.i = +1 } },
+	{ KeyPress,    MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
+	{ KeyPress,    MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
@@ -120,7 +124,7 @@ static Key keys[] = {
 	TAGKEYS(                        XK_7,                      6)
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
-	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
+	{ KeyPress,    MODKEY|ShiftMask|ControlMask, XK_q,      quit,           {0} },
 };
 
 /* button definitions */
