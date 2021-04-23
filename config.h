@@ -61,10 +61,14 @@ static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont,
 static const char *dmenucmdsudo[] = { "dmenu_run_sudo", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, "-F", "-i", NULL };
 static const char *termcmd[]  = { "alacritty", NULL };
 
-static const char *upvol[]   = { "dvol", "-cmd", "up", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-sb", col_cyan, NULL };
-static const char *downvol[] = { "dvol", "-cmd", "down", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-sb", col_cyan, NULL };
-static const char *mutevol[] = { "dvol", "-cmd", "toggle", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-sb", col_cyan, NULL };
-static const char *interactive[] = { "dvol", "-i", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-sb", col_cyan,  NULL };
+static const char *upvol[]   = { "daudio", "-cmd", "inc", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-sb", col_cyan, NULL };
+static const char *downvol[] = { "daudio", "-cmd", "dec", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-sb", col_cyan, NULL };
+static const char *mutevol[] = { "daudio", "-cmd", "toggle", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-sb", col_cyan, NULL };
+static const char *interactive[] = { "daudio", "-i", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-sb", col_cyan,  NULL };
+
+static const char *brightnessUp[]   = { "dlight", "-cmd", "inc", "-m", dmenumon, "-nb", col_gray1, "-nf", col_cyan, NULL };
+static const char *brightnessDown[]   = { "dlight", "-cmd", "dec", "-m", dmenumon,  "-nb", col_gray1, "-nf", col_cyan, NULL };
+
 
 static const char *dpowercmd[] = { "dpower", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 static const char *dblue[] = { "dblue", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
@@ -82,6 +86,11 @@ static Key keys[] = {
 	{ KeyPress,    0,                            0x1008ff13,     spawn,          {.v = upvol   } },
     { KeyPress,    0,                            0x1008ff12,     spawn,          {.v = mutevol } },
     { KeyPress,    MODKEY,                       XK_a,           spawn,          {.v = interactive } },
+
+    // brightness keys
+    { KeyPress,    0,                            0x1008ff02,     spawn,          {.v = brightnessUp } },
+    { KeyPress,    0,                            0x1008ff03,     spawn,          {.v = brightnessDown } },
+
 
         //predefined
     { KeyPress,    MODKEY,                       XK_space,  spawn,          {.v = dmenucmd } },
