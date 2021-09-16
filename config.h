@@ -28,7 +28,13 @@ static const Rule rules[] = {
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor */
 	{ "i am just here so the code will compile. please kill me.",     NULL,       NULL,       0,            1,           -1 },
-	//{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
+	//{ "jetbrains",  NULL,       NULL,       1 << 2,       0,           -1 },
+};
+
+static const DynamicGroupingRule dynamic_grouping_rules[] = {
+        {"jetbrains-clion", 20000},
+        {"jetbrains-webstorm", 20000},
+        {"jetbrains-py", 20000}
 };
 
 /* layout(s) */

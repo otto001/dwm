@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
@@ -150,6 +151,19 @@ typedef struct {
 	int isfloating;
 	int monitor;
 } Rule;
+
+typedef struct {
+    const char *class;
+    int lifetime;
+} DynamicGroupingRule;
+
+typedef struct DynamicGrouping {
+    const DynamicGroupingRule *rule;
+    unsigned int tags;
+    Monitor *mon;
+    int32_t created;
+    struct DynamicGrouping *next;
+} DynamicGrouping;
 
 /* function declarations */
 static void applyrules(Client *c);
@@ -286,6 +300,8 @@ static Drw *drw;
 static Monitor *mons, *selmon;
 static Window root, wmcheckwin;
 
+static DynamicGrouping *dg_head;
+
 /* configuration, allows nested code to access above variables */
 #include "config.h"
 
@@ -294,6 +310,62 @@ struct NumTags { char limitexceeded[LENGTH(tags) > 31 ? -1 : 1]; };
 
 /* function implementations */
 
+void
+apply_dynamic_grouping(Client *c, const char *class) {
+    struct timespec current;
+    int32_t current_ms;
+    char applied_dynamic_grouping = 0;
+    unsigned int i;
+
+    const DynamicGroupingRule *dr;
+    DynamicGrouping *dg = dg_head, *prev_dg = NULL;
+    DynamicGrouping **next_dg;
+    DynamicGrouping *new_dg;
+
+    if (clock_gettime(CLOCK_MONOTONIC, &current) < 0) {
+        die("clock_gettime:");
+    }
+    current_ms = timespec_to_ms(&current);
+
+    while (dg) {
+        if (current_ms - dg->rule->lifetime > dg->created) {
+            new_dg = dg->next;
+            if (prev_dg) {
+                prev_dg->next = new_dg;
+            } else {
+                dg_head = new_dg;
+            }
+            free(dg);
+            dg = new_dg;
+        }
+        else {
+            if (strstr(class, dg->rule->class)) {
+                c->tags = dg->tags;
+                c->mon = dg->mon;
+                applied_dynamic_grouping = 1;
+                break;
+            }
+            prev_dg = dg;
+            dg = dg->next;
+        }
+    }
+
+    if (!applied_dynamic_grouping) {
+        for (i = 0; i < LENGTH(dynamic_grouping_rules); i++) {
+            dr = &dynamic_grouping_rules[i];
+            if (strstr(class, dr->class)) {
+                new_dg = ecalloc(1, sizeof(DynamicGrouping));
+                new_dg->next = NULL;
+                new_dg->rule = dr;
+                new_dg->tags = c->tags;
+                new_dg->mon = c->mon;
+                new_dg->created = current_ms;
+                for (next_dg = &dg_head; (*next_dg) && (*next_dg)->next; next_dg = &((*next_dg)->next)) {}
+                (*next_dg) = new_dg;
+            }
+        }
+    }
+}
 
 void
 applyrules(Client *c)
@@ -324,11 +396,15 @@ applyrules(Client *c)
 				c->mon = m;
 		}
 	}
-	if (ch.res_class)
+
+	c->tags = c->tags & TAGMASK ? c->tags & TAGMASK : c->mon->tagset[c->mon->seltags];
+
+    apply_dynamic_grouping(c, class);
+
+    if (ch.res_class)
 		XFree(ch.res_class);
 	if (ch.res_name)
 		XFree(ch.res_name);
-	c->tags = c->tags & TAGMASK ? c->tags & TAGMASK : c->mon->tagset[c->mon->seltags];
 }
 
 int
@@ -2123,6 +2199,7 @@ updatestatus(void)
 {
 	if (!gettextprop(root, XA_WM_NAME, stext, sizeof(stext)))
 		strcpy(stext, "dwm-"VERSION);
+
 	drawbars();
 }
 

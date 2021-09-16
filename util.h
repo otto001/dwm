@@ -6,3 +6,4 @@
 
 void die(const char *fmt, ...);
 void *ecalloc(size_t nmemb, size_t size);
+int32_t timespec_to_ms(struct timespec *ts);

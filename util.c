@@ -33,3 +33,8 @@ die(const char *fmt, ...) {
 
 	exit(1);
 }
+
+int32_t
+timespec_to_ms(struct timespec *ts) {
+    return ts->tv_sec*1000 + ts->tv_nsec/1000000;
+}
