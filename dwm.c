@@ -1366,7 +1366,9 @@ recttomon(int x, int y, int w, int h)
 void
 resize(Client *c, int x, int y, int w, int h, int interact)
 {
-	if (applysizehints(c, &x, &y, &w, &h, interact))
+    int sizehints;
+    sizehints = applysizehints(c, &x, &y, &w, &h, interact);
+	if (sizehints || alwaysresize)
 		resizeclient(c, x, y, w, h);
 }
 
@@ -1856,7 +1858,7 @@ tile(Monitor *m)
 		return;
 
 	if (n > m->nmaster)
-		mw = m->nmaster ? m->ww * m->mfact : 0;
+		mw = m->nmaster ? (int) ((float) m->ww * m->mfact + 0.5f) : 0;
 	else
 		mw = m->ww;
 	for (i = my = ty = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
