@@ -210,6 +210,7 @@ static void motionnotify(XEvent *e);
 static void movemouse(const Arg *arg);
 static Client *nexttiled(Client *c);
 static void pop(Client *);
+static void handletransientfor(Client *c, XEvent *e);
 static void propertynotify(XEvent *e);
 static void quit(const Arg *arg);
 static Monitor *recttomon(int x, int y, int w, int h);
@@ -1305,10 +1306,35 @@ pop(Client *c)
 }
 
 void
+handletransientfor(Client *c, XEvent *e)
+{
+    Window trans;
+    const char *class;
+    XClassHint ch = { NULL, NULL };
+
+    if (!c->isfloating && (XGetTransientForHint(dpy, c->win, &trans))) {
+        XGetClassHint(dpy, c->win, &ch);
+        class = ch.res_class ? ch.res_class : broken;
+
+        // Do not apply TransientFor hint to jetbrains windows, since they are notoriously buggy.
+        if (!strstr(class, "jetbrains")) {
+            c->isfloating = (wintoclient(trans) != NULL);
+            if (c->isfloating) {
+                arrange(c->mon);
+            }
+        }
+    }
+
+    if (ch.res_class)
+        XFree(ch.res_class);
+    if (ch.res_name)
+        XFree(ch.res_name);
+}
+
+void
 propertynotify(XEvent *e)
 {
 	Client *c;
-	Window trans;
 	XPropertyEvent *ev = &e->xproperty;
 
 	if ((ev->window == root) && (ev->atom == XA_WM_NAME))
@@ -1319,10 +1345,8 @@ propertynotify(XEvent *e)
 		switch(ev->atom) {
 		default: break;
 		case XA_WM_TRANSIENT_FOR:
-			if (!c->isfloating && (XGetTransientForHint(dpy, c->win, &trans)) &&
-				(c->isfloating = (wintoclient(trans)) != NULL))
-				arrange(c->mon);
-			break;
+		    handletransientfor(c, e);
+            break;
 		case XA_WM_NORMAL_HINTS:
 			updatesizehints(c);
 			break;
