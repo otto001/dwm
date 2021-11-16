@@ -63,7 +63,6 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_desktop", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, "-F", "-i", NULL };
-static const char *dmenucmdsudo[] = { "dmenu_run_sudo", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, "-F", "-i", NULL };
 static const char *termcmd[]  = { "alacritty", NULL };
 
 static const char *upvol[]   = { "daudio", "-cmd", "inc", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-sb", col_cyan, NULL };
@@ -105,7 +104,6 @@ static Key keys[] = {
     { KeyPress,    0,                            XF86XK_MonBrightnessDown,    spawn,          {.v = brightnessDown } },
         
     { KeyPress,    MODKEY,                       XK_space,                    spawn,          {.v = dmenucmd } },
-    { KeyPress,    MODKEY|ShiftMask,             XK_space,                    spawn,          {.v = dmenucmdsudo } },
 	{ KeyPress,    MODKEY|ShiftMask,             XK_Return,                   spawn,          {.v = termcmd } },
 
     { KeyPress,    MODKEY|ShiftMask,             XK_p,                        spawn,          {.v = dpowercmd} },
