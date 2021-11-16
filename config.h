@@ -37,7 +37,7 @@ static const DynamicGroupingRule dynamic_grouping_rules[] = {
 };
 
 /* layout(s) */
-static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
+static const float mfact     = 0.55f; /* factor of master area size [0.05..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
 static const int alwaysresize = 1;    /* 1 means that a resize is always applied, even in the dimensions already respect sizehints */
