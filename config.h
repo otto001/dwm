@@ -26,9 +26,8 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class      instance    title       tags mask     isfloating   monitor */
-	{ "i am just here so the code will compile. please kill me.",     NULL,       NULL,       0,            1,           -1 },
-	//{ "jetbrains",  NULL,       NULL,       1 << 2,       0,           -1 },
+	/* class      instance    title       tags mask     isfloating   monitor   center*/
+	{ "jetbrains", "jetbrains", "win0", 0, 1, -1, 1 },
 };
 
 static const DynamicGroupingRule dynamic_grouping_rules[] = {

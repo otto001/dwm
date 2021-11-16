@@ -151,6 +151,7 @@ typedef struct {
 	unsigned int tags;
 	int isfloating;
 	int monitor;
+	int center;
 } Rule;
 
 typedef struct {
@@ -374,6 +375,7 @@ applyrules(Client *c)
 {
 	const char *class, *instance;
 	unsigned int i;
+	int x, y;
 	const Rule *r;
 	Monitor *m;
 	XClassHint ch = { NULL, NULL };
@@ -396,6 +398,13 @@ applyrules(Client *c)
 			for (m = mons; m && m->num != r->monitor; m = m->next);
 			if (m)
 				c->mon = m;
+			m = c->mon;
+
+			if (r->center) {
+                x = m->wx + (m->ww / 2 - WIDTH(c) / 2); /* center in x direction */
+                y = m->wy + (m->wh / 2 - HEIGHT(c) / 2); /* center in y direction */
+                resize(c, x, y, c->w, c->h, 0);
+            }
 		}
 	}
 
