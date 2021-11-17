@@ -30,6 +30,9 @@ static const Rule rules[] = {
 	{ "jetbrains", "jetbrains", "win0", 0, 1, -1, 1 },
 };
 
+// Do not apply TransientFor hint to jetbrains windows, since they are notoriously buggy.
+static const char *ignoretransient[] = {"jetbrains"};
+
 static const DynamicGroupingRule dynamic_grouping_rules[] = {
         {"jetbrains-clion", 20000},
         {"jetbrains-webstorm", 20000},

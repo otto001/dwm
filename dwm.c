@@ -1320,14 +1320,21 @@ handletransientfor(Client *c, XEvent *e)
 {
     Window trans;
     const char *class;
+    int i, ignore = 0;
     XClassHint ch = { NULL, NULL };
 
     if (!c->isfloating && (XGetTransientForHint(dpy, c->win, &trans))) {
         XGetClassHint(dpy, c->win, &ch);
         class = ch.res_class ? ch.res_class : broken;
 
-        // Do not apply TransientFor hint to jetbrains windows, since they are notoriously buggy.
-        if (!strstr(class, "jetbrains")) {
+        for (i = 0; i < LENGTH(ignoretransient); i++) {
+            if (strstr(class, ignoretransient[i])) {
+                ignore = 1;
+                break;
+            }
+        }
+
+        if (!ignore) {
             c->isfloating = (wintoclient(trans) != NULL);
             if (c->isfloating) {
                 arrange(c->mon);
