@@ -314,6 +314,17 @@ struct NumTags { char limitexceeded[LENGTH(tags) > 31 ? -1 : 1]; };
 /* function implementations */
 
 void
+logtofile(char* fmt, ...) {
+    FILE *file;
+    file = fopen("/tmp/dwm.log", "a");
+    va_list args;
+    va_start(args, fmt);
+    vfprintf(file, fmt, args);
+    va_end(args);
+    fclose(file);
+}
+
+void
 apply_dynamic_grouping(Client *c, const char *class) {
     struct timespec current;
     int32_t current_ms;
