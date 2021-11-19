@@ -689,11 +689,15 @@ configurerequest(XEvent *e)
 	Monitor *m;
 	XConfigureRequestEvent *ev = &e->xconfigurerequest;
 	XWindowChanges wc;
+	int bwdiff;
 
 	if ((c = wintoclient(ev->window))) {
-		if (ev->value_mask & CWBorderWidth)
-			c->bw = ev->border_width;
-		else if (c->isfloating || !selmon->lt[selmon->sellt]->arrange) {
+		if (ev->value_mask & CWBorderWidth) {
+            bwdiff = (ev->border_width - c->bw);
+            c->bw = ev->border_width;
+            if (c->isfloating)
+                resizeclient(c, c->x - bwdiff, c->y - bwdiff, c->w + bwdiff, c->h + bwdiff);
+        } else if (c->isfloating || !selmon->lt[selmon->sellt]->arrange) {
 			m = c->mon;
 			if (ev->value_mask & CWX) {
 				c->oldx = c->x;
