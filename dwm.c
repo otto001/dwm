@@ -103,7 +103,7 @@ struct Client {
 	int basew, baseh, incw, inch, maxw, maxh, minw, minh;
 	int bw, oldbw;
 	unsigned int tags;
-	int isfixed, isfloating, isurgent, neverfocus, oldstate, isfullscreen;
+	int isfixed, isfloating, isurgent, neverfocus, oldstate, isfullscreen, alwaysontop;
 	Client *next;
 	Client *snext;
 	Monitor *mon;
@@ -1510,6 +1510,14 @@ restack(Monitor *m)
 		return;
 	if (m->sel->isfloating || !m->lt[m->sellt]->arrange)
 		XRaiseWindow(dpy, m->sel->win);
+
+    for(c = m->clients; c; c = c->next){
+        if (c->alwaysontop){
+            XRaiseWindow(dpy, c->win);
+            break;
+        }
+    }
+
 	if (m->lt[m->sellt]->arrange) {
 		wc.stack_mode = Below;
 		wc.sibling = m->barwin;
@@ -1950,6 +1958,8 @@ togglefloating(const Arg *arg)
 	if (selmon->sel->isfloating)
 		resize(selmon->sel, selmon->sel->x, selmon->sel->y,
 			selmon->sel->w, selmon->sel->h, 0);
+	else
+	    selmon->sel->alwaysontop = 0;
 	arrange(selmon);
 }
 
@@ -2277,8 +2287,13 @@ updatewindowtype(Client *c)
 
 	if (state == netatom[NetWMFullscreen])
 		setfullscreen(c, 1);
-	if (wtype == netatom[NetWMWindowTypeDialog] || state == netatom[NetWMStateAbove])
-		c->isfloating = 1;
+	if (wtype == netatom[NetWMWindowTypeDialog] || state == netatom[NetWMStateAbove]) {
+        c->isfloating = 1;
+        c->alwaysontop = 1;
+	} else {
+        c->alwaysontop = 0;
+    }
+
 }
 
 void
